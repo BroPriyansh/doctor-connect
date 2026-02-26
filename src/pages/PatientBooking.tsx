@@ -99,7 +99,8 @@ const PatientBooking = () => {
     a.status !== 'rejected' &&
     a.status !== 'cancelled'
   );
-  const bookedTimes = new Set(dayAppointments.filter(a => a.status !== 'cancelled' && a.status !== 'rejected').map(a => a.time));
+
+  const bookedTimes = new Set(dayAppointments.map(a => a.time));
 
   const handleSlotClick = (time: string) => {
     if (bookedTimes.has(time)) return;

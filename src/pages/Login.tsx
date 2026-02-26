@@ -51,7 +51,7 @@ const Login = () => {
                                 <User className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                                 <Input
                                     id="username"
-                                    placeholder="Hero"
+                                    placeholder="Enter username"
                                     className="pl-9"
                                     value={username}
                                     onChange={(e) => setUsername(e.target.value)}
@@ -66,7 +66,7 @@ const Login = () => {
                                 <Input
                                     id="password"
                                     type="password"
-                                    placeholder="••••"
+                                    placeholder="Enter password"
                                     className="pl-9"
                                     value={password}
                                     onChange={(e) => setPassword(e.target.value)}

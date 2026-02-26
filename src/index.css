@@ -1,0 +1,104 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700&family=Playfair+Display:wght@600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 210 20% 98%;
+    --foreground: 210 40% 11%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 210 40% 11%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 210 40% 11%;
+
+    --primary: 187 65% 38%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 187 30% 94%;
+    --secondary-foreground: 187 65% 28%;
+
+    --muted: 210 20% 95%;
+    --muted-foreground: 210 12% 50%;
+
+    --accent: 160 50% 45%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 72% 55%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 210 18% 89%;
+    --input: 210 18% 89%;
+    --ring: 187 65% 38%;
+
+    --radius: 0.75rem;
+
+    --online: 145 63% 42%;
+    --online-foreground: 0 0% 100%;
+    --offline: 0 0% 65%;
+    --booked: 30 80% 55%;
+    --booked-foreground: 0 0% 100%;
+
+    --sidebar-background: 0 0% 98%;
+    --sidebar-foreground: 240 5.3% 26.1%;
+    --sidebar-primary: 240 5.9% 10%;
+    --sidebar-primary-foreground: 0 0% 98%;
+    --sidebar-accent: 240 4.8% 95.9%;
+    --sidebar-accent-foreground: 240 5.9% 10%;
+    --sidebar-border: 220 13% 91%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+
+  .dark {
+    --background: 210 40% 6%;
+    --foreground: 210 20% 95%;
+    --card: 210 35% 9%;
+    --card-foreground: 210 20% 95%;
+    --popover: 210 35% 9%;
+    --popover-foreground: 210 20% 95%;
+    --primary: 187 65% 45%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 187 20% 15%;
+    --secondary-foreground: 187 40% 80%;
+    --muted: 210 25% 14%;
+    --muted-foreground: 210 15% 60%;
+    --accent: 160 50% 40%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 210 25% 18%;
+    --input: 210 25% 18%;
+    --ring: 187 65% 45%;
+    --online: 145 63% 42%;
+    --online-foreground: 0 0% 100%;
+    --offline: 0 0% 45%;
+    --booked: 30 80% 50%;
+    --booked-foreground: 0 0% 100%;
+    --sidebar-background: 240 5.9% 10%;
+    --sidebar-foreground: 240 4.8% 95.9%;
+    --sidebar-primary: 224.3 76.3% 48%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 240 3.7% 15.9%;
+    --sidebar-accent-foreground: 240 4.8% 95.9%;
+    --sidebar-border: 240 3.7% 15.9%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans;
+    font-family: 'DM Sans', sans-serif;
+  }
+
+  h1, h2, h3 {
+    font-family: 'Playfair Display', serif;
+  }
+}

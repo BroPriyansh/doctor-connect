@@ -146,7 +146,7 @@ const DoctorDashboard = () => {
                         </div>
                     </div>
                     <div className="flex items-center gap-6">
-                        <div className="hidden xs:flex items-center gap-3 glass-card rounded-full px-5 py-2 border-white/20 shadow-inner">
+                        <div className="flex items-center gap-3 glass-card rounded-full px-5 py-2 border-white/20 shadow-inner">
                             <span className="text-xs font-black uppercase tracking-tighter text-muted-foreground">Status</span>
                             <div className="flex items-center gap-2">
                                 <span className={`text-[10px] font-black uppercase ${isOnline ? 'text-online' : 'text-offline'}`}>

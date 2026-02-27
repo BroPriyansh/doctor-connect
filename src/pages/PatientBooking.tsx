@@ -158,7 +158,7 @@ const PatientBooking = () => {
             <Link to="/doctor">
               <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-primary premium-button">
                 <Settings className="w-4 h-4 mr-1" />
-                <span className="hidden xs:inline">Doctor Portal</span>
+                <span className="hidden sm:inline">Doctor Portal</span>
               </Button>
             </Link>
           </div>
@@ -237,7 +237,7 @@ const PatientBooking = () => {
                 <p className="text-muted-foreground text-lg font-medium">All slots fixed for today or fully booked.</p>
               </div>
             ) : (
-              <div className="grid grid-cols-2 xs:grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-4">
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
                 {slots.map((time) => {
                   const isBooked = bookedTimes.has(time);
                   return (
@@ -336,8 +336,8 @@ const PatientBooking = () => {
                     </div>
                   ) : (
                     myAppointments.map((apt) => (
-                      <div key={apt.id} className="flex flex-col xs:flex-row items-center justify-between p-5 rounded-2xl bg-white dark:bg-black/20 border-2 border-primary/5 shadow-sm interactive-card gap-4">
-                        <div className="flex items-center gap-4 w-full xs:w-auto">
+                      <div key={apt.id} className="flex flex-col sm:flex-row items-center justify-between p-5 rounded-2xl bg-white dark:bg-black/20 border-2 border-primary/5 shadow-sm interactive-card gap-4">
+                        <div className="flex items-center gap-4 w-full sm:w-auto">
                           <div className="w-12 h-12 rounded-2xl bg-primary/5 flex flex-col items-center justify-center border border-primary/10">
                             <span className="text-[10px] font-black uppercase text-primary leading-none">{apt.day.slice(0, 3)}</span>
                             <span className="text-lg font-black text-primary leading-none">{apt.date.split('-')[2]}</span>
@@ -355,7 +355,7 @@ const PatientBooking = () => {
                         <Button
                           variant="destructive"
                           size="sm"
-                          className="w-full xs:w-auto gap-2 rounded-xl font-bold premium-button h-10 px-6 shadow-lg shadow-destructive/20"
+                          className="w-full sm:w-auto gap-2 rounded-xl font-bold premium-button h-10 px-6 shadow-lg shadow-destructive/20"
                           onClick={() => handleCancelAppointment(apt.id)}
                         >
                           <Trash2 className="w-4 h-4" /> Cancel Booking

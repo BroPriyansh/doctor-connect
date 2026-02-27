@@ -88,7 +88,7 @@ const PatientBooking = () => {
 
   const dayConfig = availability.find(a => a.day === selectedDay);
   const slots = dayConfig?.enabled
-    ? generateTimeSlots(dayConfig.startTime, dayConfig.endTime, dayConfig.slotDuration)
+    ? generateTimeSlots(dayConfig.shifts, dayConfig.slotDuration)
       .filter(time => !isPastTime(selectedDate, time))
     : [];
 
@@ -137,27 +137,28 @@ const PatientBooking = () => {
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
-      <header className="border-b bg-card sticky top-0 z-10">
+      <header className="glass sticky top-0 z-50 border-b border-white/10 shadow-sm">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-primary flex items-center justify-center">
-              <Stethoscope className="w-5 h-5 text-primary-foreground" />
+            <div className="w-11 h-11 rounded-2xl bg-gradient-to-br from-primary to-accent flex items-center justify-center shadow-lg shadow-primary/20 interactive-card">
+              <Stethoscope className="w-6 h-6 text-primary-foreground" />
             </div>
             <div>
-              <h1 className="text-xl font-display font-bold text-foreground">MediBook</h1>
-              <p className="text-sm text-muted-foreground">Book your appointment</p>
+              <h1 className="text-2xl font-display font-bold gradient-text">MediBook</h1>
+              <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold">Premium Clinic Services</p>
             </div>
           </div>
           <div className="flex items-center gap-4">
-            <div className="flex items-center gap-2 bg-muted rounded-xl px-4 py-2">
-              <div className={`w-2.5 h-2.5 rounded-full ${isOnline ? 'bg-online animate-pulse-dot' : 'bg-offline'}`} />
-              <span className="text-sm font-medium">
-                Doctor is {isOnline ? 'In Clinic' : 'Away'}
+            <div className="hidden sm:flex items-center gap-2 glass-card rounded-full px-4 py-1.5 border-white/20">
+              <div className={`w-2.5 h-2.5 rounded-full ${isOnline ? 'bg-online animate-pulse-dot shadow-[0_0_10px_rgba(var(--online),0.5)]' : 'bg-offline'}`} />
+              <span className="text-xs font-bold tracking-tight">
+                DOCTOR IS {isOnline ? 'IN CLINIC' : 'AWAY'}
               </span>
             </div>
             <Link to="/doctor">
-              <Button variant="ghost" size="sm" className="text-muted-foreground">
-                <Settings className="w-4 h-4 mr-1" /> Doctor Login
+              <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-primary premium-button">
+                <Settings className="w-4 h-4 mr-1" />
+                <span className="hidden xs:inline">Doctor Portal</span>
               </Button>
             </Link>
           </div>
@@ -166,12 +167,15 @@ const PatientBooking = () => {
 
       <main className="container mx-auto px-4 py-8 space-y-8">
         {/* Hero Section */}
-        <div className="text-center space-y-3 pb-4">
-          <h2 className="text-3xl md:text-4xl font-display font-bold text-foreground">
-            Book an Appointment
+        <div className="text-center space-y-4 py-12 relative">
+          <div className="absolute inset-0 bg-gradient-to-b from-primary/5 to-transparent rounded-3xl -z-10" />
+          <Badge className="bg-primary/10 text-primary border-primary/20 mb-2 px-3 py-1">Healthcare Simplified</Badge>
+          <h2 className="text-4xl md:text-6xl font-display font-bold text-foreground tracking-tight">
+            Book Your <span className="gradient-text">Wellness</span> Visit
           </h2>
-          <p className="text-muted-foreground max-w-lg mx-auto">
-            Select a day and choose an available time slot to schedule your visit.
+          <p className="text-muted-foreground max-w-xl mx-auto text-lg leading-relaxed">
+            Experience seamless healthcare scheduling with top-tier practitioners.
+            Choose your preferred time and get instant confirmation.
           </p>
         </div>
 
@@ -187,12 +191,12 @@ const PatientBooking = () => {
                 key={day}
                 onClick={() => isEnabled && setSelectedDay(day)}
                 disabled={!isEnabled}
-                className={`px-4 py-3 rounded-xl text-sm font-medium transition-all ${isSelected
-                  ? 'bg-primary text-primary-foreground shadow-lg shadow-primary/25'
+                className={`px-6 py-4 rounded-2xl text-sm font-bold transition-all interactive-card border-2 ${isSelected
+                  ? 'bg-primary text-primary-foreground border-primary shadow-xl shadow-primary/25 scale-105'
                   : isEnabled
-                    ? 'bg-card text-foreground hover:bg-muted border'
-                    : 'bg-muted/50 text-muted-foreground cursor-not-allowed'
-                  } ${isToday && !isSelected ? 'ring-2 ring-primary/30' : ''}`}
+                    ? 'bg-card text-foreground border-border hover:border-primary/50'
+                    : 'bg-muted/30 text-muted-foreground border-transparent cursor-not-allowed opacity-50'
+                  } ${isToday && !isSelected ? 'border-primary/20' : ''}`}
               >
                 <span className="block">{day.slice(0, 3)}</span>
                 {isToday && <span className="text-[10px] opacity-70">Today</span>}
@@ -202,25 +206,38 @@ const PatientBooking = () => {
         </div>
 
         {/* Time Slots */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2 font-display">
-              <Clock className="w-5 h-5 text-primary" />
-              Available Slots — {selectedDay}
+        <Card className="glass-card overflow-hidden border-none ring-1 ring-white/20">
+          <CardHeader className="border-b border-white/10 bg-white/5 dark:bg-black/5">
+            <CardTitle className="flex items-center gap-2 font-display text-2xl">
+              <Clock className="w-6 h-6 text-primary" />
+              Available Time Slots
             </CardTitle>
             {dayConfig?.enabled && (
-              <p className="text-sm text-muted-foreground">
-                {formatTime(dayConfig.startTime)} – {formatTime(dayConfig.endTime)} · {dayConfig.slotDuration} min slots
-              </p>
+              <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-muted-foreground font-medium">
+                <span className="text-foreground font-black">{selectedDay}</span>
+                <div className="flex flex-wrap items-center gap-2">
+                  {dayConfig.shifts.map((shift, idx) => (
+                    <Badge key={idx} variant="outline" className="bg-primary/5 text-primary border-primary/10 font-bold px-2 py-0">
+                      {formatTime(shift.startTime)} – {formatTime(shift.endTime)}
+                    </Badge>
+                  ))}
+                </div>
+              </div>
             )}
           </CardHeader>
-          <CardContent>
+          <CardContent className="pt-8">
             {!dayConfig?.enabled ? (
-              <p className="text-muted-foreground text-center py-12">Doctor is not available on {selectedDay}.</p>
+              <div className="text-center py-20 bg-muted/20 rounded-3xl border-2 border-dashed border-muted">
+                <CalendarDays className="w-12 h-12 text-muted-foreground/30 mx-auto mb-4" />
+                <p className="text-muted-foreground text-lg font-medium">Doctor is not accepting appointments on {selectedDay}.</p>
+              </div>
             ) : slots.length === 0 ? (
-              <p className="text-muted-foreground text-center py-12">No slots configured for this day.</p>
+              <div className="text-center py-20 bg-muted/20 rounded-3xl border-2 border-dashed border-muted">
+                <Clock className="w-12 h-12 text-muted-foreground/30 mx-auto mb-4" />
+                <p className="text-muted-foreground text-lg font-medium">All slots fixed for today or fully booked.</p>
+              </div>
             ) : (
-              <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-3">
+              <div className="grid grid-cols-2 xs:grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-4">
                 {slots.map((time) => {
                   const isBooked = bookedTimes.has(time);
                   return (
@@ -228,13 +245,13 @@ const PatientBooking = () => {
                       key={time}
                       onClick={() => handleSlotClick(time)}
                       disabled={isBooked}
-                      className={`py-3 px-2 rounded-xl text-sm font-medium transition-all border ${isBooked
-                        ? 'bg-booked/10 text-booked border-booked/20 cursor-not-allowed'
-                        : 'bg-card text-foreground border-border hover:border-primary hover:bg-primary/5 hover:shadow-md'
+                      className={`py-4 px-2 rounded-2xl text-sm font-bold transition-all border-2 interactive-card ${isBooked
+                        ? 'bg-booked/10 text-booked border-booked/20 cursor-not-allowed opacity-60'
+                        : 'bg-card text-foreground border-border hover:border-primary hover:bg-primary/5 shadow-sm'
                         }`}
                     >
-                      {formatTime(time)}
-                      {isBooked && <span className="block text-[10px] mt-0.5">Booked</span>}
+                      <span className="text-base">{formatTime(time)}</span>
+                      {isBooked && <span className="block text-[10px] mt-1 uppercase tracking-tight font-black">Booked</span>}
                     </button>
                   );
                 })}
@@ -243,34 +260,39 @@ const PatientBooking = () => {
           </CardContent>
         </Card>
 
-        {/* Today's Schedule */}
+        {/* Booked Appointments */}
         {dayAppointments.length > 0 && (
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2 font-display">
+          <Card className="border-none ring-1 ring-border shadow-md overflow-hidden">
+            <CardHeader className="bg-muted/30">
+              <CardTitle className="flex items-center gap-2 font-display text-xl">
                 <CalendarDays className="w-5 h-5 text-primary" />
-                Booked Appointments — {selectedDay}
+                Scheduled for {selectedDay}
               </CardTitle>
             </CardHeader>
-            <CardContent>
-              <div className="space-y-2">
+            <CardContent className="pt-6">
+              <div className="space-y-3">
                 {dayAppointments.map((apt) => (
-                  <div key={apt.id} className="flex items-center justify-between p-3 rounded-xl bg-muted/50">
-                    <div className="flex items-center gap-3">
-                      <div className="w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center text-primary font-semibold text-sm">
+                  <div key={apt.id} className="flex items-center justify-between p-4 rounded-2xl bg-secondary/30 border border-secondary/50 interactive-card">
+                    <div className="flex items-center gap-4">
+                      <div className="w-10 h-10 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-black text-sm shadow-inner">
                         {apt.patientName.charAt(0).toUpperCase()}
                       </div>
-                      <span className="font-medium text-foreground">{apt.patientName}</span>
+                      <div>
+                        <span className="font-bold text-foreground block">{apt.patientName}</span>
+                        <span className="text-[10px] uppercase tracking-widest text-muted-foreground font-black">Verified Patient</span>
+                      </div>
                     </div>
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-3">
                       <Badge variant={
                         apt.status === 'approved' ? 'default' :
                           apt.status === 'rejected' ? 'destructive' :
                             apt.status === 'cancelled' ? 'secondary' : 'outline'
-                      }>
+                      } className="px-3 rounded-full font-bold uppercase text-[10px]">
                         {apt.status}
                       </Badge>
-                      <Badge className="bg-primary text-primary-foreground">{formatTime(apt.time)}</Badge>
+                      <Badge className="bg-primary/10 text-primary border-primary/20 hover:bg-primary/20 px-3 rounded-full font-black">
+                        {formatTime(apt.time)}
+                      </Badge>
                     </div>
                   </div>
                 ))}
@@ -279,108 +301,129 @@ const PatientBooking = () => {
           </Card>
         )}
         {/* Manage My Appointments */}
-        <Card className="border-primary/20 bg-primary/5">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2 font-display">
-              <Search className="w-5 h-5 text-primary" />
-              Manage My Appointments
-            </CardTitle>
-            <CardDescription>
-              Enter your phone number to view and manage your scheduled visits.
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="flex gap-2 max-w-sm">
-              <Input
-                placeholder="10-digit mobile number"
-                maxLength={10}
-                value={searchPhone}
-                onChange={(e) => setSearchPhone(e.target.value.replace(/\D/g, ''))}
-              />
-            </div>
-
-            {searchPhone.length === 10 && (
-              <div className="space-y-3 pt-2">
-                {myAppointments.length === 0 ? (
-                  <p className="text-sm text-muted-foreground italic">No active appointments found for this number.</p>
-                ) : (
-                  myAppointments.map((apt) => (
-                    <div key={apt.id} className="flex items-center justify-between p-4 rounded-xl bg-card border shadow-sm">
-                      <div className="space-y-1">
-                        <div className="flex items-center gap-2">
-                          <Badge variant={apt.status === 'approved' ? 'default' : 'outline'}>
-                            {apt.status}
-                          </Badge>
-                          <span className="font-bold">{apt.day}, {apt.date}</span>
-                        </div>
-                        <p className="text-lg font-display font-medium">{formatTime(apt.time)}</p>
-                      </div>
-                      <Button
-                        variant="destructive"
-                        size="sm"
-                        className="gap-1.5"
-                        onClick={() => handleCancelAppointment(apt.id)}
-                      >
-                        <Trash2 className="w-4 h-4" /> Cancel
-                      </Button>
-                    </div>
-                  ))
-                )}
-                <div className="flex items-start gap-2 p-3 rounded-lg bg-orange-50 border border-orange-100 text-orange-800 text-xs">
-                  <AlertCircle className="w-4 h-4 mt-0.5 shrink-0" />
-                  <p>Cancellations are allowed up to 3 hours before the appointment. For later changes, please call the clinic directly.</p>
+        <div className="relative group">
+          <div className="absolute -inset-1 bg-gradient-to-r from-primary/20 to-accent/20 rounded-[2rem] blur opacity-25 group-hover:opacity-50 transition duration-1000 group-hover:duration-200" />
+          <Card className="relative border-none ring-1 ring-primary/20 bg-card/80 backdrop-blur-sm overflow-hidden rounded-[1.8rem]">
+            <CardHeader className="pb-4">
+              <CardTitle className="flex items-center gap-2 font-display text-2xl">
+                <Search className="w-6 h-6 text-primary" />
+                Manage Appointments
+              </CardTitle>
+              <CardDescription className="text-sm font-medium">
+                Access your booking history and manage upcoming visits securely.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <div className="flex flex-col sm:flex-row gap-4 max-w-md">
+                <div className="relative flex-1">
+                  <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                  <Input
+                    placeholder="Enter 10-digit phone number"
+                    maxLength={10}
+                    value={searchPhone}
+                    className="pl-10 h-12 rounded-2xl border-2 focus-visible:ring-primary/20"
+                    onChange={(e) => setSearchPhone(e.target.value.replace(/\D/g, ''))}
+                  />
                 </div>
               </div>
-            )}
-          </CardContent>
-        </Card>
+
+              {searchPhone.length === 10 && (
+                <div className="space-y-4 pt-4 border-t border-dashed border-border">
+                  {myAppointments.length === 0 ? (
+                    <div className="flex flex-col items-center justify-center py-8 text-center bg-muted/20 rounded-2xl">
+                      <AlertCircle className="w-8 h-8 text-muted-foreground/30 mb-2" />
+                      <p className="text-sm text-muted-foreground font-medium italic">No active appointments found for this number.</p>
+                    </div>
+                  ) : (
+                    myAppointments.map((apt) => (
+                      <div key={apt.id} className="flex flex-col xs:flex-row items-center justify-between p-5 rounded-2xl bg-white dark:bg-black/20 border-2 border-primary/5 shadow-sm interactive-card gap-4">
+                        <div className="flex items-center gap-4 w-full xs:w-auto">
+                          <div className="w-12 h-12 rounded-2xl bg-primary/5 flex flex-col items-center justify-center border border-primary/10">
+                            <span className="text-[10px] font-black uppercase text-primary leading-none">{apt.day.slice(0, 3)}</span>
+                            <span className="text-lg font-black text-primary leading-none">{apt.date.split('-')[2]}</span>
+                          </div>
+                          <div className="space-y-0.5">
+                            <div className="flex items-center gap-2">
+                              <Badge variant={apt.status === 'approved' ? 'default' : 'outline'} className="text-[10px] h-5 rounded-full font-black uppercase">
+                                {apt.status}
+                              </Badge>
+                              <span className="text-xs font-bold text-muted-foreground px-2 py-0.5 bg-muted rounded-full">ID: {apt.id.slice(0, 8)}</span>
+                            </div>
+                            <p className="text-xl font-display font-black tracking-tight">{formatTime(apt.time)}</p>
+                          </div>
+                        </div>
+                        <Button
+                          variant="destructive"
+                          size="sm"
+                          className="w-full xs:w-auto gap-2 rounded-xl font-bold premium-button h-10 px-6 shadow-lg shadow-destructive/20"
+                          onClick={() => handleCancelAppointment(apt.id)}
+                        >
+                          <Trash2 className="w-4 h-4" /> Cancel Booking
+                        </Button>
+                      </div>
+                    ))
+                  )}
+                  <div className="flex items-start gap-3 p-4 rounded-2xl bg-orange-500/10 border border-orange-500/20 text-orange-600 dark:text-orange-400 text-xs font-medium leading-relaxed">
+                    <AlertCircle className="w-5 h-5 shrink-0" />
+                    <p>Cancellation Policy: Appointments can be cancelled up to 3 hours before the scheduled time. For urgent changes, please contact the support desk.</p>
+                  </div>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </div>
       </main>
 
       {/* Booking Dialog */}
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-        <DialogContent>
+        <DialogContent className="sm:max-w-md rounded-[2rem] border-none ring-1 ring-border shadow-2xl glass animate-in fade-in zoom-in duration-300">
           <DialogHeader>
-            <DialogTitle className="font-display">Book Appointment</DialogTitle>
+            <DialogTitle className="font-display text-3xl font-black gradient-text text-center">Confirm Booking</DialogTitle>
           </DialogHeader>
-          <div className="space-y-4 py-2">
-            <div className="bg-muted rounded-xl p-3 text-center">
-              <p className="text-sm text-muted-foreground">Selected Slot</p>
-              <p className="text-lg font-bold text-foreground">
-                {selectedSlot && formatTime(selectedSlot)} — {selectedDay}
+          <div className="space-y-6 py-6">
+            <div className="bg-primary/5 rounded-[1.5rem] p-5 text-center border border-primary/10 shadow-inner">
+              <p className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground font-black mb-1">Schedule Details</p>
+              <p className="text-xl font-black text-foreground">
+                {selectedSlot && formatTime(selectedSlot)} <span className="text-primary mx-1">•</span> {selectedDay}
               </p>
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="name" className="flex items-center gap-1.5">
-                <User className="w-3.5 h-3.5" /> Full Name
-              </Label>
-              <Input
-                id="name"
-                placeholder="Enter your full name"
-                value={patientName}
-                onChange={(e) => setPatientName(e.target.value)}
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="phone" className="flex items-center gap-1.5">
-                <Phone className="w-3.5 h-3.5" /> Phone Number
-              </Label>
-              <Input
-                id="phone"
-                placeholder="10-digit mobile number"
-                type="tel"
-                maxLength={10}
-                value={patientPhone}
-                onChange={(e) => setPatientPhone(e.target.value.replace(/\D/g, ''))}
-              />
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="name" className="flex items-center gap-2 text-xs font-black uppercase tracking-wider text-muted-foreground ml-1">
+                  <User className="w-3.5 h-3.5 text-primary" /> Full Name
+                </Label>
+                <Input
+                  id="name"
+                  placeholder="e.g. John Doe"
+                  className="h-12 rounded-2xl border-2 focus-visible:ring-primary/20 font-medium"
+                  value={patientName}
+                  onChange={(e) => setPatientName(e.target.value)}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="phone" className="flex items-center gap-2 text-xs font-black uppercase tracking-wider text-muted-foreground ml-1">
+                  <Phone className="w-3.5 h-3.5 text-primary" /> Phone Number
+                </Label>
+                <Input
+                  id="phone"
+                  placeholder="Enter mobile number"
+                  type="tel"
+                  maxLength={10}
+                  className="h-12 rounded-2xl border-2 focus-visible:ring-primary/20 font-medium font-mono"
+                  value={patientPhone}
+                  onChange={(e) => setPatientPhone(e.target.value.replace(/\D/g, ''))}
+                />
+              </div>
             </div>
           </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setDialogOpen(false)}>Cancel</Button>
+          <DialogFooter className="sm:justify-between gap-3">
+            <Button variant="ghost" onClick={() => setDialogOpen(false)} className="rounded-xl font-bold px-6 h-12">Discard</Button>
             <Button
+              className="rounded-xl font-black px-8 h-12 premium-button bg-primary hover:bg-primary/90 shadow-lg shadow-primary/25 flex-1"
               onClick={handleBookAppointment}
               disabled={!patientName.trim() || patientPhone.length !== 10}
             >
-              Confirm Booking
+              Verify & Book Now
             </Button>
           </DialogFooter>
         </DialogContent>

@@ -9,11 +9,15 @@ export interface TimeSlot {
   patientPhone?: string;
 }
 
+export interface Shift {
+  startTime: string; // "09:00"
+  endTime: string;   // "17:00"
+}
+
 export interface DayAvailability {
   day: DayOfWeek;
   enabled: boolean;
-  startTime: string;
-  endTime: string;
+  shifts: Shift[];
   slotDuration: number; // in minutes
 }
 
@@ -29,20 +33,25 @@ export interface Appointment {
   status: AppointmentStatus;
 }
 
-export function generateTimeSlots(start: string, end: string, duration: number): string[] {
+export function generateTimeSlots(shifts: Shift[], duration: number): string[] {
   const slots: string[] = [];
-  const [startH, startM] = start.split(':').map(Number);
-  const [endH, endM] = end.split(':').map(Number);
-  let current = startH * 60 + startM;
-  const endMinutes = endH * 60 + endM;
 
-  while (current < endMinutes) {
-    const h = Math.floor(current / 60);
-    const m = current % 60;
-    slots.push(`${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}`);
-    current += duration;
-  }
-  return slots;
+  shifts.forEach(shift => {
+    const [startH, startM] = shift.startTime.split(':').map(Number);
+    const [endH, endM] = shift.endTime.split(':').map(Number);
+    let current = startH * 60 + startM;
+    const endMinutes = endH * 60 + endM;
+
+    while (current < endMinutes) {
+      const h = Math.floor(current / 60);
+      const m = current % 60;
+      slots.push(`${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}`);
+      current += duration;
+    }
+  });
+
+  // Ensure unique slots and sorted (in case shifts overlap or are out of order)
+  return [...new Set(slots)].sort();
 }
 
 export function formatTime(time: string): string {
@@ -82,15 +91,32 @@ export function getDefaultAvailability(): DayAvailability[] {
   return DAYS_OF_WEEK.map(day => ({
     day,
     enabled: !['Saturday', 'Sunday'].includes(day),
-    startTime: '09:00',
-    endTime: '17:00',
+    shifts: [{ startTime: '09:00', endTime: '17:00' }],
     slotDuration: 30,
   }));
 }
 
 export function loadAvailability(): DayAvailability[] {
   const stored = localStorage.getItem(STORAGE_KEYS.availability);
-  return stored ? JSON.parse(stored) : getDefaultAvailability();
+  if (!stored) return getDefaultAvailability();
+
+  try {
+    const data = JSON.parse(stored);
+    return data.map((item: any) => {
+      // Migration logic: if shifts property is missing, convert startTime/endTime to shifts
+      if (!item.shifts && item.startTime && item.endTime) {
+        return {
+          day: item.day,
+          enabled: item.enabled,
+          shifts: [{ startTime: item.startTime, endTime: item.endTime }],
+          slotDuration: item.slotDuration || 30
+        };
+      }
+      return item;
+    });
+  } catch (e) {
+    return getDefaultAvailability();
+  }
 }
 
 export function saveAvailability(data: DayAvailability[]) {
